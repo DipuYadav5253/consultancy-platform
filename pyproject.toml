@@ -2,7 +2,10 @@
 DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["test_*.py"]
 addopts = "-q --reuse-db"
-filterwarnings = ["ignore:No directory at"]
+filterwarnings = [
+    "ignore:No directory at",
+    "ignore:The default scheme will be changed from:DeprecationWarning",
+]
 testpaths = ["tests"]
 
 [tool.ruff]
