@@ -20,13 +20,17 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
 CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    "apps.core.admin_config.SecureAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "axes",
+    "django_otp",
+    "django_otp.plugins.otp_static",
+    "django_otp.plugins.otp_totp",
+    "two_factor",
     "apps.core",
     "apps.accounts",
     "apps.audit",
@@ -39,6 +43,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",
+    "apps.accounts.middleware.StaffTwoFactorMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
@@ -87,13 +93,21 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-LOGIN_URL = "admin:login"
+
+LOGIN_URL = "two_factor:login"
+LOGIN_REDIRECT_URL = "two_factor:profile"
+
+# Two-factor login (authenticator app + backup codes). Staff must enable it.
+TWO_FACTOR_PATCH_ADMIN = False  # our own SecureAdminSite already enforces it
+OTP_TOTP_ISSUER = env("SITE_NAME", default="Meridian")
+
 
 # Brute-force protection: lock an account+IP pair after 5 failed logins for 1 hour.
 AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = 1
 AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
 AXES_RESET_ON_SUCCESS = True
+AXES_USERNAME_FORM_FIELD = "username"  # Django login forms always call the field "username"
 AXES_USERNAME_CALLABLE = "apps.accounts.security.axes_username"
 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 14
