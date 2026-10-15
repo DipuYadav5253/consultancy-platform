@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load web_extras %}
+{% block title %}Study destinations | {{ SITE_NAME }}{% endblock %}
+{% block description %}Compare study destinations: intakes, living costs, visa overview and scholarships.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="mesh" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span></div>
+  <div class="wrap">
+    <p class="eyebrow in-up u1"><span class="dot"></span> Destinations</p>
+    <h1 class="in-up u2">Where do you want to study?</h1>
+    <p class="lead in-up u3">Every page shows the date it was last reviewed, because rules change.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    {% if countries %}
+    <div class="grid-cards" data-stagger>
+      {% for c in countries %}
+      <a class="dest tone-{{ c.iso_code|tone }} spot reveal" href="{{ c.get_absolute_url }}">
+        <span class="dest-code" aria-hidden="true">{{ c.iso_code }}</span>
+        <span class="dest-body">
+          <span class="dest-name">{{ c.name }}</span>
+          <span class="dest-meta">{{ c.program_count }} program{{ c.program_count|pluralize }}{% if c.intakes %} &middot; {{ c.intakes }}{% endif %}</span>
+        </span>
+        <span class="dest-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty"><h2>Destinations are being prepared.</h2><p>Please check back soon, or <a href="{% url 'web:book' %}">talk to a counsellor</a>.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.db.models import Q
+from django.urls import reverse
 
 from apps.core.models import PublishableModel, TimeStampedModel
 
@@ -35,6 +36,9 @@ class Country(TimeStampedModel, PublishableModel):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("web:country_detail", args=[self.slug])
 
     def clean(self):
         super().clean()
@@ -151,3 +155,6 @@ class Program(TimeStampedModel, PublishableModel):
 
     def __str__(self):
         return f"{self.name} ({self.get_level_display()}), {self.university}"
+
+    def get_absolute_url(self):
+        return reverse("web:program_detail", args=[self.slug])

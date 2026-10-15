@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     "apps.accounts",
     "apps.audit",
     "apps.catalogue",
+    "apps.web",
+    "django.contrib.sitemaps",
 ]
 
 MIDDLEWARE = [
@@ -66,7 +68,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "apps.core.context_processors.site",
+                "apps.web.context_processors.site",
             ],
         },
     },
@@ -165,6 +167,7 @@ CELERY_TASK_TIME_LIMIT = 300
 CELERY_TIMEZONE = "UTC"
 
 SITE_NAME = env("SITE_NAME", default="Meridian")
+CONTACT_EMAIL = env("CONTACT_EMAIL", default="hello@example.com")
 
 LOGGING = {
     "version": 1,

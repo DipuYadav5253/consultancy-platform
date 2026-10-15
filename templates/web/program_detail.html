@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load web_extras %}
+{% block title %}{{ program.name }}, {{ program.university.name }} | {{ SITE_NAME }}{% endblock %}
+{% block description %}{{ program.name }} ({{ program.get_level_display }}) at {{ program.university.name }}, {{ program.university.country.name }}.{% endblock %}
+{% block og_title %}{{ program.name }}, {{ program.university.name }}{% endblock %}
+{% block content %}
+<section class="page-hero tone-{{ program.university.country.iso_code|tone }}">
+  <div class="mesh" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span></div>
+  <div class="wrap">
+    <p class="crumbs in-up u1"><a href="{% url 'web:program_list' %}">Programs</a> <span aria-hidden="true">/</span> <a href="{{ program.university.country.get_absolute_url }}">{{ program.university.country.name }}</a></p>
+    <p class="in-up u1"><span class="badge badge-light">{{ program.get_level_display }}</span></p>
+    <h1 class="in-up u2">{{ program.name }}</h1>
+    <p class="lead in-up u3">{{ program.university.name }}{% if program.university.city %}, {{ program.university.city }}{% endif %}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap detail-grid">
+    <div class="prose reveal">
+      <h2>About this program</h2>
+      {% if program.description %}{{ program.description|linebreaks }}{% else %}<p>Ask a counsellor for the full program details and entry requirements.</p>{% endif %}
+      {% if program.university.website %}<p class="source">University website: <a href="{{ program.university.website }}" rel="noopener nofollow" target="_blank">{{ program.university.website|truncatechars:60 }}</a></p>{% endif %}
+      <p class="fine">Always confirm fees and entry requirements with the university before applying.</p>
+    </div>
+    <aside class="keyfacts reveal">
+      <h2>Key facts</h2>
+      <dl>
+        <div><dt>Tuition / year</dt><dd>{% if program.tuition_per_year %}{{ program.tuition_per_year|money:program.tuition_currency }}{% else %}On request{% endif %}</dd></div>
+        <div><dt>Duration</dt><dd>{{ program.duration_months }} months</dd></div>
+        <div><dt>Field</dt><dd>{{ program.field_of_study }}</dd></div>
+        <div><dt>Intakes</dt><dd>{{ program.intakes|default:"On request" }}</dd></div>
+        <div><dt>IELTS minimum</dt><dd>{% if program.ielts_min %}{{ program.ielts_min }}{% else %}Not listed{% endif %}</dd></div>
+        <div><dt>PTE minimum</dt><dd>{% if program.pte_min %}{{ program.pte_min }}{% else %}Not listed{% endif %}</dd></div>
+      </dl>
+      <a class="btn btn-amber btn-block" href="{% url 'web:book' %}">Talk to a counsellor</a>
+    </aside>
+  </div>
+</section>
+
+{% if related %}
+<section class="section tint">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>More at {{ program.university.name }}</h2></div>
+    <div class="grid-cards" data-stagger>{% for program in related %}{% include "web/_program_card.html" %}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

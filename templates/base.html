@@ -2,11 +2,84 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}{{ SITE_NAME }} | Study abroad &amp; IELTS / PTE coaching{% endblock %}</title>
+  <meta name="description" content="{% block description %}Plan your degree abroad: country guides, a searchable program catalogue, and IELTS / PTE coaching.{% endblock %}">
+  <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+  <meta property="og:site_name" content="{{ SITE_NAME }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
+  <meta name="theme-color" content="#06151a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2306151a'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%2319c3b1' stroke-width='2.4'/%3E%3Cpath d='M16 5v22' stroke='%23ffb547' stroke-width='2.4' stroke-linecap='round' transform='rotate(24 16 16)'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  <script src="{% static 'js/site.js' %}" defer></script>
 </head>
 <body>
-  <main>{% block content %}{% endblock %}</main>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <div class="wrap bar">
+      <a class="brand" href="{% url 'web:home' %}" aria-label="{{ SITE_NAME }} home">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M16 4v24" stroke="var(--amber)" stroke-width="2.6" stroke-linecap="round" transform="rotate(24 16 16)"/></svg>
+        <span class="brand-name">{{ SITE_NAME }}</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a href="{% url 'web:country_list' %}" {% if request.resolver_match.url_name == 'country_list' or request.resolver_match.url_name == 'country_detail' %}aria-current="page"{% endif %}>Destinations</a>
+        <a href="{% url 'web:program_list' %}" {% if request.resolver_match.url_name == 'program_list' or request.resolver_match.url_name == 'program_detail' %}aria-current="page"{% endif %}>Programs</a>
+        <a href="{% url 'web:home' %}#coaching">IELTS &amp; PTE</a>
+        <a href="{% url 'web:home' %}#process">How it works</a>
+      </nav>
+      <a class="btn btn-amber nav-cta" href="{% url 'web:book' %}">Book a session</a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="mobile-menu" data-burger>
+        <span class="burger-line"></span><span class="burger-line"></span><span class="sr">Menu</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobile-menu" data-menu>
+    <nav class="wrap" aria-label="Mobile">
+      <a href="{% url 'web:country_list' %}">Destinations</a>
+      <a href="{% url 'web:program_list' %}">Programs</a>
+      <a href="{% url 'web:home' %}#coaching">IELTS &amp; PTE</a>
+      <a href="{% url 'web:home' %}#process">How it works</a>
+      <a class="btn btn-amber" href="{% url 'web:book' %}">Book a session</a>
+    </nav>
+  </div>
+
+  <main id="main">{% block content %}{% endblock %}</main>
+
+  <footer class="site-footer">
+    <div class="wrap foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="{% url 'web:home' %}">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M16 4v24" stroke="var(--amber)" stroke-width="2.6" stroke-linecap="round" transform="rotate(24 16 16)"/></svg>
+          <span class="brand-name">{{ SITE_NAME }}</span>
+        </a>
+        <p>Study abroad counselling, university applications, visa guidance and IELTS / PTE coaching.</p>
+        <p><a class="foot-mail" href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a></p>
+      </div>
+      <div>
+        <h2 class="foot-h">Destinations</h2>
+        <ul>
+          {% for c in footer_countries %}<li><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>{% empty %}<li><a href="{% url 'web:country_list' %}">All destinations</a></li>{% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h2 class="foot-h">Explore</h2>
+        <ul>
+          <li><a href="{% url 'web:home' %}#process">How it works</a></li>
+          <li><a href="{% url 'web:home' %}#coaching">IELTS &amp; PTE coaching</a></li>
+          <li><a href="{% url 'web:book' %}">Book a session</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap foot-legal">
+      <p>We give honest guidance. We cannot guarantee admission or a visa decision, which are made by universities and governments. Always check requirements with the official source.</p>
+      <p>&copy; {% now "Y" %} {{ SITE_NAME }}</p>
+    </div>
+  </footer>
 </body>
 </html>

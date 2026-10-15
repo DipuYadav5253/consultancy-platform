@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Find a program | {{ SITE_NAME }}{% endblock %}
+{% block description %}Search study programs by country, level, budget and IELTS or PTE score.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="mesh" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span></div>
+  <div class="wrap">
+    <p class="eyebrow in-up u1"><span class="dot"></span> Programs</p>
+    <h1 class="in-up u2">Find a program that fits you.</h1>
+    <p class="lead in-up u3">Filter by country, level, yearly budget and your IELTS or PTE score.</p>
+  </div>
+</section>
+
+<section class="section search-section">
+  <div class="wrap search-grid">
+    <aside class="filters">
+      <form method="get" action="{% url 'web:program_list' %}" class="filters-form">
+        <h2 class="filters-title">Filters</h2>
+        <label class="field light"><span>Search</span>{{ form.q }}</label>
+        <label class="field light"><span>Country</span>{{ form.country }}</label>
+        <label class="field light"><span>Level</span>{{ form.level }}</label>
+        <div class="field-row">
+          <label class="field light"><span>IELTS band</span>{{ form.ielts }}</label>
+          <label class="field light"><span>PTE score</span>{{ form.pte }}</label>
+        </div>
+        <label class="field light"><span>Max tuition / year</span>{{ form.max_tuition }}<small>Uses the selected country's currency.</small></label>
+        <label class="field light"><span>Sort by</span>{{ form.sort }}</label>
+        {% if form.errors %}<ul class="errors" role="alert">{% for field in form %}{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}{% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+        <button class="btn btn-dark btn-block" type="submit">Apply filters</button>
+        {% if filtered %}<a class="reset" href="{% url 'web:program_list' %}">Clear all filters</a>{% endif %}
+        <p class="fine">With a score filter, programs that list no minimum are hidden so you only see confirmed matches.</p>
+      </form>
+    </aside>
+
+    <div class="results">
+      <p class="count" aria-live="polite"><strong>{{ page.paginator.count }}</strong> program{{ page.paginator.count|pluralize }} found</p>
+      {% if page.object_list %}
+      <div class="grid-cards two" data-stagger>{% for program in page.object_list %}{% include "web/_program_card.html" %}{% endfor %}</div>
+      {% if page.paginator.num_pages > 1 %}
+      <nav class="pager" aria-label="Pages">
+        {% if page.has_previous %}<a class="btn btn-dark" href="{% querystring page=page.previous_page_number %}">Previous</a>{% endif %}
+        <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+        {% if page.has_next %}<a class="btn btn-dark" href="{% querystring page=page.next_page_number %}">Next</a>{% endif %}
+      </nav>
+      {% endif %}
+      {% else %}
+      <div class="empty"><h2>No programs match yet.</h2><p>Try a lower score requirement, a larger budget or fewer filters. Or <a href="{% url 'web:book' %}">ask a counsellor</a> to help.</p></div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

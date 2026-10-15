@@ -1,0 +1,15 @@
+{% load web_extras %}
+<article class="pcard spot reveal">
+  <div class="pcard-top">
+    <span class="chip-s">{{ program.university.country.iso_code }}</span>
+    <span class="badge">{{ program.get_level_display }}</span>
+  </div>
+  <h3 class="pcard-name"><a href="{{ program.get_absolute_url }}">{{ program.name }}</a></h3>
+  <p class="pcard-uni">{{ program.university.name }}{% if program.university.city %}, {{ program.university.city }}{% endif %}</p>
+  <dl class="pcard-meta">
+    <div><dt>Tuition / year</dt><dd>{% if program.tuition_per_year %}{{ program.tuition_per_year|money:program.tuition_currency }}{% else %}On request{% endif %}</dd></div>
+    <div><dt>Duration</dt><dd>{{ program.duration_months }} months</dd></div>
+    <div><dt>IELTS</dt><dd>{% if program.ielts_min %}{{ program.ielts_min }}{% else %}&ndash;{% endif %}</dd></div>
+    <div><dt>PTE</dt><dd>{% if program.pte_min %}{{ program.pte_min }}{% else %}&ndash;{% endif %}</dd></div>
+  </dl>
+</article>

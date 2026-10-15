@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load web_extras %}
+{% block title %}Study in {{ country.name }} | {{ SITE_NAME }}{% endblock %}
+{% block description %}Study in {{ country.name }}: intakes, living costs, visa overview and scholarships.{% endblock %}
+{% block og_title %}Study in {{ country.name }}{% endblock %}
+{% block content %}
+<section class="page-hero tone-{{ country.iso_code|tone }}">
+  <div class="mesh" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span></div>
+  <div class="wrap">
+    <p class="crumbs in-up u1"><a href="{% url 'web:country_list' %}">Destinations</a> <span aria-hidden="true">/</span> {{ country.name }}</p>
+    <h1 class="in-up u2">Study in {{ country.name }}</h1>
+    {% if country.summary %}<p class="lead in-up u3">{{ country.summary|truncatewords:40 }}</p>{% endif %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <dl class="facts" data-stagger>
+      <div class="fact reveal"><dt>Intakes</dt><dd>{{ country.intakes|default:"On request" }}</dd></div>
+      <div class="fact reveal"><dt>Currency</dt><dd>{{ country.currency }}</dd></div>
+      <div class="fact reveal"><dt>Living costs / year</dt><dd>{% if country.living_cost_per_year_min %}{{ country.living_cost_per_year_min|money:country.currency }}{% if country.living_cost_per_year_max %} &ndash; {{ country.living_cost_per_year_max|money:country.currency }}{% endif %}{% else %}On request{% endif %}</dd></div>
+      <div class="fact reveal"><dt>Last reviewed</dt><dd>{{ country.last_reviewed_on|date:"j M Y" }}</dd></div>
+    </dl>
+
+    <div class="prose-grid">
+      {% if country.summary %}<div class="prose reveal"><h2>Overview</h2>{{ country.summary|linebreaks }}</div>{% endif %}
+      {% if country.visa_overview %}
+      <div class="prose reveal"><h2>Visa overview</h2>{{ country.visa_overview|linebreaks }}
+        {% if country.source_url %}<p class="source">Official source: <a href="{{ country.source_url }}" rel="noopener nofollow" target="_blank">{{ country.source_url|truncatechars:60 }}</a></p>{% endif %}
+      </div>
+      {% endif %}
+      {% if country.scholarships_overview %}<div class="prose reveal"><h2>Scholarships</h2>{{ country.scholarships_overview|linebreaks }}</div>{% endif %}
+    </div>
+  </div>
+</section>
+
+{% if universities %}
+<section class="section tint">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Universities</h2></div>
+    <ul class="uni-list" data-stagger>
+      {% for u in universities %}
+        <li class="uni reveal"><div><h3>{{ u.name }}</h3><p>{% if u.city %}{{ u.city }} &middot; {% endif %}{{ u.program_count }} program{{ u.program_count|pluralize }}</p></div>
+         <a class="link-arrow" href="{% url 'web:program_list' %}?country={{ country.slug }}&amp;q={{ u.name|urlencode }}">View programs <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{% if programs %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Programs in {{ country.name }}</h2></div>
+    <div class="grid-cards" data-stagger>{% for program in programs %}{% include "web/_program_card.html" %}{% endfor %}</div>
+    {% if program_total > 6 %}<p class="more reveal"><a class="btn btn-dark" href="{% url 'web:program_list' %}?country={{ country.slug }}">See all {{ program_total }} programs</a></p>{% endif %}
+  </div>
+</section>
+{% endif %}
+
+<section class="cta cta-small">
+  <div class="mesh" aria-hidden="true"><span class="blob b1"></span></div>
+  <div class="wrap reveal">
+    <h2>Thinking about {{ country.name }}?</h2>
+    <p class="lead">A counsellor can check your profile against real requirements.</p>
+    <a class="btn btn-amber" href="{% url 'web:book' %}">Book a session</a>
+  </div>
+</section>
+{% endblock %}

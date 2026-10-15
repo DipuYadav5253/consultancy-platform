@@ -1,12 +1,9 @@
+from django.http import HttpResponseServerError
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.views.decorators.http import require_GET
 
 from . import health
-
-
-@require_GET
-def home(request):
-    return render(request, "home.html")
 
 
 @require_GET
@@ -24,4 +21,6 @@ def error_404(request, exception=None):
 
 
 def error_500(request):
-    return render(request, "errors/500.html", status=500)
+    # Rendered without a request on purpose: if the database is the problem, the normal
+    # page context would fail again and hide the real error.
+    return HttpResponseServerError(render_to_string("errors/500.html"))
